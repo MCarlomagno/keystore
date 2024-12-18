@@ -1,6 +1,6 @@
 ## Signet
 
-A tool for signing using ED25519 keys stored securely in HashiCorp Vault. This enables remote key management and signing operations through HashiCorp's secret management service.
+A tool for signing raw messages using ED25519 keys stored in HashiCorp Vault. This enables remote key management and signing operations through HashiCorp's secret management service.
 
 > Warning: this is an experimental project under development.
 
