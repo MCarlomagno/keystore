@@ -1,7 +1,7 @@
 use reqwest::{Client, Error};
 use serde::Deserialize;
 
-pub struct HashicorpClient {
+pub struct HashicorpCloudClient {
     client: Client,
     client_id: String,
     client_secret: String,
@@ -30,7 +30,7 @@ pub struct HashicorpResponse {
     pub secret: HashicorpSecret,
 }
 
-impl HashicorpClient {
+impl HashicorpCloudClient {
     pub fn new(
         client_id: String,
         client_secret: String,
