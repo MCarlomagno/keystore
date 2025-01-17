@@ -1,17 +1,29 @@
 ## Signer
 
-A tool for creating secure keys and signing raw transactions using ECDSA (ethereum) or ED25519 (stellar, solana) schemas. This enables flexible key management and signing operations through local keystores or HashiCorp's secret management service.
+A multi-chain keystore library that provides a unified interface for managing private keys.
 
 > Warning: this is an experimental project under development.
 
-## Running the project
+## Features
 
-```bash
-cargo run <key_name> <message_to_sign>
-```
+- **Multiple Key Sources**
+  - Local keystore management (JSON keystore files)
+  - HashiCorp Vault integration (both local on-prem vaults and cloud)
+  
+- **Chain Support**
+  - Ethereum (EVM) compatible chains
+  - Stellar/Soroban
+  
+- **Key Operations**
+  - Generate new keys
+  - Load existing keys
+  - Secure key storage and retrieval
 
-Where `key_name` is the name of the secret key in the vault, and `message_to_sign` is any arbitrary string.
+## Examples
 
+Check the `examples/` directory for complete usage examples:
+- `keystore-to-alloy-wallet`: Convert keystore to EVM wallet
+- `local-keystore-to-stellar-wallet`: Convert keystore to Stellar wallet
 
 ## Getting started with Hashicorp
 
