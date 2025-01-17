@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-signer = { path = "../.." }
+keystore = { path = "../.." }
 alloy-network = "0.9"
 alloy-primitives = "0.8"
 alloy-signer = "0.9"

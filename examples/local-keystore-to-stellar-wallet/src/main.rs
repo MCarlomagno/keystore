@@ -1,4 +1,4 @@
-use signer::LocalClient;
+use keystore::LocalClient;
 use ed25519_dalek::SigningKey;
 use stellar_strkey::ed25519::PublicKey;
 

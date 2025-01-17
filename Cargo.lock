@@ -1600,6 +1600,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "keystore"
+version = "0.1.0"
+dependencies = [
+ "base64",
+ "dotenv",
+ "eth-keystore",
+ "rand",
+ "reqwest",
+ "serde",
+ "tokio",
+]
+
+[[package]]
 name = "lazy_static"
 version = "1.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1637,7 +1650,7 @@ dependencies = [
  "alloy-primitives",
  "alloy-signer",
  "alloy-signer-local",
- "signer",
+ "keystore",
 ]
 
 [[package]]
@@ -1645,7 +1658,7 @@ name = "local-keystore-to-stellar-wallet"
 version = "0.1.0"
 dependencies = [
  "ed25519-dalek",
- "signer",
+ "keystore",
  "stellar-strkey",
 ]
 
@@ -2499,19 +2512,6 @@ checksum = "77549399552de45a898a580c1b41d445bf730df867cc44e6c0233bbc4b8329de"
 dependencies = [
  "digest 0.10.7",
  "rand_core",
-]
-
-[[package]]
-name = "signer"
-version = "0.1.0"
-dependencies = [
- "base64",
- "dotenv",
- "eth-keystore",
- "rand",
- "reqwest",
- "serde",
- "tokio",
 ]
 
 [[package]]

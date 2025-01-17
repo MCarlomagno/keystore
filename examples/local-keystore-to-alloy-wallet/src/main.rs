@@ -1,7 +1,7 @@
 use alloy_network::EthereumWallet;
 use alloy_primitives::FixedBytes;
 use alloy_signer_local::LocalSigner;
-use signer::LocalClient;
+use keystore::LocalClient;
 
 
 fn main() {
