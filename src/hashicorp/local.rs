@@ -3,8 +3,6 @@ use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use std::error::Error;
 use base64::engine::general_purpose::STANDARD as BASE64;
-use alloy_primitives::PrimitiveSignature as EthSignature;
-use ed25519_dalek::Signature as Ed25519Signature;
 
 #[derive(Debug, Serialize)]
 struct SignPayload {
@@ -51,8 +49,8 @@ impl KeyType {
 
 #[derive(Debug)]
 pub enum SignatureType {
-    Ed25519(Ed25519Signature),  // Using dalek's Signature type
-    Ecdsa(EthSignature),
+    Ed25519,
+    Ecdsa,
 }
 
 pub struct HashicorpLocalClient {

@@ -1,5 +1,5 @@
 [package]
-name = "keystore-to-alloy-wallet"
+name = "local-keystore-to-alloy-wallet"
 version = "0.1.0"
 edition = "2021"
 

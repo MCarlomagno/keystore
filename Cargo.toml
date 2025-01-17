@@ -10,21 +10,10 @@ members = [
 ]
 
 [dependencies]
-ed25519-dalek = "2.1.1"
 reqwest = { version = "0.12.9", features = ["json"] }
 tokio = { version = "1.0", features = ["full"] }
-hex = "0.4"
 dotenv = "0.15"
 eth-keystore = "0.5.0"
-base32 = "0.4"
 base64 = "0.22"
 serde = { version = "1.0", features = ["derive"] }
 rand = "0.8.5"
-
-# stellar
-stellar-strkey = "0.0.9"
-
-# evm
-alloy-primitives = "0.8"
-alloy-signer = "0.9"
-alloy-signer-local = "0.9"
