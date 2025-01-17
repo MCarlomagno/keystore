@@ -2074,7 +2074,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "signet"
+name = "signer"
 version = "0.1.0"
 dependencies = [
  "alloy-primitives",

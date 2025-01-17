@@ -1,4 +1,4 @@
-## Signet
+## Signer
 
 A tool for creating secure keys and signing raw transactions using ECDSA (ethereum) or ED25519 (stellar, solana) schemas. This enables flexible key management and signing operations through local keystores or HashiCorp's secret management service.
 
