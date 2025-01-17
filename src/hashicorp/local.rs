@@ -3,7 +3,7 @@ use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use std::error::Error;
 use base64::engine::general_purpose::STANDARD as BASE64;
-use alloy_primitives::{PrimitiveSignature as EthSignature, FixedBytes};
+use alloy_primitives::PrimitiveSignature as EthSignature;
 use ed25519_dalek::Signature as Ed25519Signature;
 
 #[derive(Debug, Serialize)]
@@ -127,7 +127,7 @@ impl HashicorpLocalClient {
           return Err("Invalid vault signature format".into());
       }
 
-      let sig_bytes = BASE64.decode(parts[2])?;
+      // let sig_bytes = BASE64.decode(parts[2])?;
       
       match key_type {
         KeyType::Ed25519 => {

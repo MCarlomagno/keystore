@@ -3,6 +3,12 @@ name = "signer"
 version = "0.1.0"
 edition = "2021"
 
+[workspace]
+members = [
+    ".",
+    "examples/keystore-to-alloy-wallet"
+]
+
 [dependencies]
 ed25519-dalek = "2.1.1"
 reqwest = { version = "0.12.9", features = ["json"] }
@@ -20,3 +26,5 @@ stellar-strkey = "0.0.9"
 
 # evm
 alloy-primitives = "0.8"
+alloy-signer = "0.9"
+alloy-signer-local = "0.9"

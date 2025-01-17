@@ -1,3 +1,5 @@
 /target
 .env
 .stellar
+
+examples/keystore-to-alloy-wallet/target
