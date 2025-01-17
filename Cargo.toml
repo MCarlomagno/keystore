@@ -6,7 +6,7 @@ edition = "2021"
 [workspace]
 members = [
     ".",
-    "examples/keystore-to-alloy-wallet"
+    "examples/*"
 ]
 
 [dependencies]
