@@ -1,4 +1,4 @@
-## Signer
+## Keystore
 
 A multi-chain keystore library that provides a unified interface for managing private keys.
 
