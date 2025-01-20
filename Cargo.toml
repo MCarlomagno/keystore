@@ -9,6 +9,9 @@ repository = "https://github.com/MCarlomagno/keystore"
 readme = "README.md"
 keywords = ["keystore", "tool"]
 categories = ["development-tools"]
+exclude = [
+    ".cargo_vcs_info.json",
+]
 
 [lib]
 name = "oz_keystore"
