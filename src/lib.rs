@@ -1,5 +1,5 @@
-pub mod hashicorp;
-pub mod keystore;
+mod hashicorp;
+mod keystore;
 
 pub use hashicorp::local::HashicorpLocalClient;
 pub use hashicorp::cloud::HashicorpCloudClient;

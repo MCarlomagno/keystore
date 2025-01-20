@@ -1,8 +1,7 @@
 use alloy_network::EthereumWallet;
 use alloy_primitives::FixedBytes;
 use alloy_signer_local::LocalSigner;
-use keystore::LocalClient;
-
+use oz_keystore::LocalClient;
 
 fn main() {
   // generates a private key stored in encrypted json file
