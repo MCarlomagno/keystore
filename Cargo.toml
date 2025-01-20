@@ -1,7 +1,26 @@
 [package]
 name = "oz-keystore"
+description = "A multi-chain keystore library that provides a unified interface for managing private keys."
 version = "0.1.0"
 edition = "2021"
+license-file = "LICENSE"
+homepage = "https://github.com/MCarlomagno/keystore"
+repository = "https://github.com/MCarlomagno/keystore"
+readme = "README.md"
+keywords = ["keystore", "tool"]
+categories = ["development-tools"]
+
+[lib]
+name = "oz_keystore"
+path = "src/lib.rs"
+
+[[example]]
+name = "local-keystore-to-alloy-wallet"
+path = "examples/local-keystore-to-alloy-wallet.rs"
+
+[[example]]
+name = "local-keystore-to-stellar-wallet"
+path = "examples/local-keystore-to-stellar-wallet.rs"
 
 [workspace]
 members = [
