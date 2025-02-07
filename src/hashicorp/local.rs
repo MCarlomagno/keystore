@@ -1,191 +1,119 @@
-use base64::Engine;
-use reqwest::Client;
+use reqwest::{Client, Error};
 use serde::{Deserialize, Serialize};
-use std::error::Error;
-use base64::engine::general_purpose::STANDARD as BASE64;
 
-#[derive(Debug, Serialize)]
-struct SignPayload {
-    input: String,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    key_version: Option<u32>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    prehashed: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    signature_algorithm: Option<String>,
+#[derive(Serialize, Deserialize, Debug)]
+struct SecretData {
+    secret: String,
 }
 
-#[derive(Debug, Serialize)]
-struct CreateKeyPayload {
-    #[serde(rename = "type")]
-    key_type: String,
-    exportable: bool,
-    allow_plaintext_backup: bool,
+#[derive(Serialize, Deserialize, Debug)]
+struct SecretRequest {
+    data: SecretData,
 }
 
-#[derive(Debug, Deserialize)]
-struct SignResponse {
-    data: SignData,
+#[derive(Deserialize, Debug)]
+struct SecretResponseData {
+  data: Option<SecretData>,
 }
 
-#[derive(Debug, Deserialize)]
-struct SignData {
-    signature: String,
+#[derive(Deserialize, Debug)]
+struct SecretResponse {
+  data: Option<SecretResponseData>,
 }
 
-pub enum KeyType {
-  Ed25519,
-  ECDSA,
+#[derive(Deserialize, Debug)]
+struct SecretListData {
+    keys: Vec<String>,
 }
 
-impl KeyType {
-  fn as_str(&self) -> &'static str {
-      match self {
-          KeyType::Ed25519 => "ed25519",
-          KeyType::ECDSA => "ecdsa-p256",
-      }
-  }
-}
 
-#[derive(Debug)]
-pub enum SignatureType {
-    Ed25519,
-    Ecdsa,
+#[derive(Deserialize, Debug)]
+struct SecretListResponse {
+    request_id: String,
+    lease_id: String,
+    renewable: bool,
+    lease_duration: u64,
+    data: SecretListData,
+    #[serde(default)]
+    wrap_info: Option<()>,
+    #[serde(default)]
+    warnings: Option<()>,
+    #[serde(default)]
+    auth: Option<()>,
+    mount_type: String,
 }
 
 pub struct HashicorpLocalClient {
     client: Client,
+    base_url: String,
     token: String,
-    address: String,
 }
 
 impl HashicorpLocalClient {
-    pub fn new(token: String, address: String) -> Self {
-        Self {
-            client: Client::new(),
-            token,
-            address,
-        }
+    pub fn new(base_url: &str, token: &str) -> Self {
+      Self {
+        client: Client::new(),
+        base_url: base_url.to_string(),
+        token: token.to_string(),
+      }
     }
 
-    pub async fn create_key_transit(
-      &self,
-      key_name: &str,
-      key_type: KeyType,
-      exportable: bool,
-  ) -> Result<(), Box<dyn Error>> {
-      let url = format!(
-          "{}/v1/transit/keys/{}",
-          self.address.trim_end_matches('/'),
-          key_name
-      );
-
-      let payload = CreateKeyPayload {
-          key_type: key_type.as_str().to_string(),
-          exportable,
-          allow_plaintext_backup: exportable,
-      };
-
-      let response = self
-          .client
-          .post(&url)
-          .header("X-Vault-Token", &self.token)
-          .json(&payload)
-          .send()
-          .await?;
-
-      if !response.status().is_success() {
-          return Err(format!(
-              "Failed to create key: {} - {}",
-              response.status(),
-              response.text().await?
-          )
-          .into());
+    pub fn new_with_client(base_url: &str, token: &str, client: reqwest::Client) -> Self {
+      Self {
+          base_url: base_url.to_string(),
+          token: token.to_string(),
+          client,
       }
+  }
 
+    pub async fn store_secret(&self, id: &str, secret: &str) -> Result<(), Error> {
+      let url = format!("{}/v1/secret/data/{}", self.base_url, id);
+      let body = SecretRequest { data: SecretData { secret: secret.to_string() } };
+      
+      self.client.post(&url)
+        .header("X-Vault-Token", &self.token)
+        .json(&body)
+        .send()
+        .await?;
+      
       Ok(())
     }
 
-    pub async fn sign_transit(
-      &self,
-      key_name: &str,
-      payload: &[u8],
-      key_type: KeyType,
-  ) -> Result<SignatureType, Box<dyn Error>> {
-      let hash_algorithm = match key_type {
-          KeyType::ECDSA => Some("sha2-256"),
-          KeyType::Ed25519 => None,
-      };
+    pub async fn list_secrets(&self) -> Result<Vec<String>, Error> {
+      let url = format!("{}/v1/secret/metadata?list=true", self.base_url);
+      let response = self.client.get(&url) 
+        .header("X-Vault-Token", &self.token)
+        .send()
+        .await?
+        .json::<SecretListResponse>()
+        .await?;
 
-      let vault_signature = self.sign_message(key_name, payload, hash_algorithm).await?;
+      println!("response {:?}", response);
       
-      // Extract base64 signature
-      let parts: Vec<&str> = vault_signature.split(':').collect();
-      if parts.len() != 3 {
-          return Err("Invalid vault signature format".into());
-      }
-
-      // let sig_bytes = BASE64.decode(parts[2])?;
-      
-      match key_type {
-        KeyType::Ed25519 => {
-          todo!("parse signature bytes to stellar scheme");
-          // Ok(SignatureType::Ed25519(sig_bytes))
-        },
-        KeyType::ECDSA => {
-          todo!("parse signature bytes to EVM scheme");
-          // Ok(SignatureType::Ecdsa(sig_bytes))
-        }
+      Ok(response.data.keys)
     }
-  }
 
-    async fn sign_message(
-      &self,
-      key_name: &str,
-      payload: &[u8],
-      hash_algorithm: Option<&str>,
-    ) -> Result<String, Box<dyn Error>> {
-      let input = BASE64.encode(payload);
+    pub async fn get_secret(&self, id: &str) -> Result<Option<String>, Error> {
+      let url = format!("{}/v1/secret/data/{}", self.base_url, id);
+      let response: SecretResponse = self.client.get(&url)
+        .header("X-Vault-Token", &self.token)
+        .send()
+        .await?
+        .json()
+        .await?;
+      
+        Ok(response.data
+          .and_then(|d| d.data)
+          .map(|d| d.secret))
+    }
 
-      let payload = SignPayload {
-          input,
-          key_version: None,
-          prehashed: None,
-          signature_algorithm: None,
-      };
-
-      let url = match hash_algorithm {
-          Some(algo) => format!(
-              "{}/v1/transit/sign/{}/{}",
-              self.address.trim_end_matches('/'),
-              key_name,
-              algo
-          ),
-          None => format!(
-              "{}/v1/transit/sign/{}",
-              self.address.trim_end_matches('/'),
-              key_name
-          ),
-      };
-
-      let response = self
-          .client
-          .post(&url)
-          .header("X-Vault-Token", &self.token)
-          .json(&payload)
-          .send()
-          .await?;
-
-      if !response.status().is_success() {
-          return Err(format!(
-              "Failed to sign message: {} - {}",
-              response.status(),
-              response.text().await?
-          )
-          .into());
-      }
-
-      let sign_response: SignResponse = response.json().await?;
-      Ok(sign_response.data.signature)
+    pub async fn delete_secret(&self, id: &str) -> Result<(), Error> {
+      let url = format!("{}/v1/secret/data/{}", self.base_url, id);
+      self.client.delete(&url)
+        .header("X-Vault-Token", &self.token)
+        .send()
+        .await?;
+      
+      Ok(())
     }
 }
