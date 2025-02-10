@@ -1,5 +1,6 @@
 use reqwest::{Client, Error};
 use serde::{Deserialize, Serialize};
+use stellar_strkey::ed25519::PrivateKey;
 
 #[derive(Serialize, Deserialize, Debug)]
 struct SecretData {
@@ -26,7 +27,7 @@ struct SecretListData {
     keys: Vec<String>,
 }
 
-
+#[allow(dead_code)]
 #[derive(Deserialize, Debug)]
 struct SecretListResponse {
     request_id: String,
@@ -41,6 +42,13 @@ struct SecretListResponse {
     #[serde(default)]
     auth: Option<()>,
     mount_type: String,
+}
+
+#[derive(Debug)]
+pub enum KeyType {
+    EVM,
+    Stellar,
+    Solana,
 }
 
 pub struct HashicorpLocalClient {
@@ -58,17 +66,44 @@ impl HashicorpLocalClient {
       }
     }
 
+    fn encode_key(&self, key: Vec<u8>, key_type: KeyType) -> String {
+      match key_type {
+        KeyType::EVM => hex::encode(&key),
+        KeyType::Stellar => PrivateKey::from_payload(&key).unwrap().to_string(),
+        KeyType::Solana => {
+            // TODO: Implement Solana-specific encoding (base58)
+            hex::encode(key)
+        },
+      }
+    }
+
+    fn decode_key(&self, key: String, key_type: KeyType) -> Vec<u8> {
+      match key_type {
+        KeyType::EVM => hex::decode(&key).unwrap(),
+        KeyType::Stellar => PrivateKey::from_string(&key).unwrap().0.to_vec(),
+        KeyType::Solana => {
+            // TODO: Implement Solana-specific decoding (base58)
+            hex::decode(key).unwrap()
+        },
+      }
+    }
+ 
     pub fn new_with_client(base_url: &str, token: &str, client: reqwest::Client) -> Self {
       Self {
           base_url: base_url.to_string(),
           token: token.to_string(),
           client,
       }
-  }
+    }
 
-    pub async fn store_secret(&self, id: &str, secret: &str) -> Result<(), Error> {
+    pub async fn store_secret(&self, id: &str, secret: Vec<u8>, key_type: KeyType) -> Result<(), Error> {
       let url = format!("{}/v1/secret/data/{}", self.base_url, id);
-      let body = SecretRequest { data: SecretData { secret: secret.to_string() } };
+
+      let body = SecretRequest { 
+        data: SecretData { 
+          secret: self.encode_key(secret, key_type)
+        } 
+      };
       
       self.client.post(&url)
         .header("X-Vault-Token", &self.token)
@@ -87,13 +122,11 @@ impl HashicorpLocalClient {
         .await?
         .json::<SecretListResponse>()
         .await?;
-
-      println!("response {:?}", response);
       
       Ok(response.data.keys)
     }
 
-    pub async fn get_secret(&self, id: &str) -> Result<Option<String>, Error> {
+    pub async fn get_secret(&self, id: &str, key_type: KeyType) -> Result<Option<Vec<u8>>, Error> {
       let url = format!("{}/v1/secret/data/{}", self.base_url, id);
       let response: SecretResponse = self.client.get(&url)
         .header("X-Vault-Token", &self.token)
@@ -104,7 +137,7 @@ impl HashicorpLocalClient {
       
         Ok(response.data
           .and_then(|d| d.data)
-          .map(|d| d.secret))
+          .map(|d| self.decode_key(d.secret, key_type)))
     }
 
     pub async fn delete_secret(&self, id: &str) -> Result<(), Error> {

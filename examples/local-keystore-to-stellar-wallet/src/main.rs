@@ -2,7 +2,6 @@ use oz_keystore::LocalClient;
 use ed25519_dalek::SigningKey;
 use stellar_strkey::ed25519::PublicKey;
 
-
 fn main() {
   // generates a private key stored in encrypted json file
   LocalClient::generate(".".into(), "test".into(), Some("my-key.json"));

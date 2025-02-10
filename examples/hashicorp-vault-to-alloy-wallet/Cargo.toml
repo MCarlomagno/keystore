@@ -1,0 +1,15 @@
+[package]
+name = "hashicorp-vault-to-alloy-wallet"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+oz-keystore = { path = "../.." }
+alloy-network = "0.9"
+alloy-primitives = "0.8"
+alloy-signer = "0.9"
+alloy-signer-local = "0.9"
+tokio = { version = "1.0", features = ["full"] }
+reqwest = { version = "0.12.9", features = ["json"] }
+rand = "0.8"
+hex = "0.4"
