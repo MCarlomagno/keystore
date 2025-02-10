@@ -17,15 +17,9 @@ async fn main() {
 
   let random_key: [u8; 32] = rand::thread_rng().gen();
   client.store_secret("my_secret", random_key.to_vec(), KeyType::EVM).await.unwrap();
-
-  let secrets = client.list_secrets().await.unwrap();
-  println!("all secrets {:?}", secrets);
-
   let secret = client.get_secret("my_secret", KeyType::EVM).await.unwrap().unwrap();
 
   let hex_secret = hex::encode(&secret);
-
-  println!("hex secret {:?}", hex_secret);
 
   let key_bytes = FixedBytes::from_hex(&hex_secret).unwrap();
   let signer = LocalSigner::from_bytes(&key_bytes)
