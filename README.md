@@ -29,7 +29,24 @@ Check the `examples/` directory for complete usage examples:
 - `hashicorp-vault-to-stellar-wallet`: Convert pk stored in vault to Stellar wallet
 - `hashicorp-vault-to-solana-wallet`: Convert pk stored in vault to Solana wallet
 
+## Local Keystore
+
+The local keystore provides secure storage of private keys in encrypted JSON files on your local filesystem. It supports multiple key types (EVM, Stellar, Solana) and uses industry-standard encryption methods.
+
+### Usage
+
+See [local-keystore-to-alloy-wallet example](examples/hashicorp-vault-to-alloy-wallet) for full implementation using alloy.
+
+```rust
+  let dir = "./key";
+  let password = "password123";
+  let name = "key.json";
+  let key = LocalClient::generate(dir, password, name)
+```
+
 ## Hashicorp Vault
+
+Provides integration with HashiCorp Vault for secure key management. Supports both local Vault instances and HashiCorp Cloud, with the ability to store and retrieve private keys for multiple blockchain networks (EVM, Stellar, Solana).
 
 ### Getting Started
 
@@ -38,7 +55,6 @@ Check the `examples/` directory for complete usage examples:
 ```bash
 vault server -dev -dev-root-token-id="root"
 ```
-3. Run 
 
 ### Usage
 
