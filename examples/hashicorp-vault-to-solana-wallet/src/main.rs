@@ -1,4 +1,4 @@
-use oz_keystore::{HashicorpLocalClient, KeyType};
+use oz_keystore::{HashicorpVaultClient, KeyType};
 use reqwest::ClientBuilder;
 use solana_keypair::{keypair_from_seed, Keypair};
 use solana_signer::Signer;
@@ -12,7 +12,7 @@ async fn main() {
     .build()
     .unwrap();
 
-  let client = HashicorpLocalClient::new_with_client("http://127.0.0.1:8200", "root", client);
+  let client = HashicorpVaultClient::new_with_client("http://127.0.0.1:8200", "root", client);
 
   let keypair = Keypair::new();
   client.store_secret("my_solana_secret", keypair.secret().to_bytes().to_vec(), KeyType::Solana).await.unwrap();

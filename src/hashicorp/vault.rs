@@ -51,13 +51,13 @@ pub enum KeyType {
     Solana,
 }
 
-pub struct HashicorpLocalClient {
+pub struct HashicorpVaultClient {
     client: Client,
     base_url: String,
     token: String,
 }
 
-impl HashicorpLocalClient {
+impl HashicorpVaultClient {
     pub fn new(base_url: &str, token: &str) -> Self {
       Self {
         client: Client::new(),

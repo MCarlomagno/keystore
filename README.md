@@ -8,7 +8,7 @@ A multi-chain keystore library that provides a unified interface for managing pr
 
 - **Multiple Key Sources**
   - Local keystore management (JSON keystore files)
-  - HashiCorp Vault integration (both local on-prem vaults and cloud)
+  - HashiCorp Vault integration (both on-prem vaults and cloud)
   
 - **Chain Support**
   - Ethereum (EVM) compatible chains
@@ -25,6 +25,9 @@ A multi-chain keystore library that provides a unified interface for managing pr
 Check the `examples/` directory for complete usage examples:
 - `local-keystore-to-alloy-wallet`: Convert keystore to EVM wallet
 - `local-keystore-to-stellar-wallet`: Convert keystore to Stellar wallet
+- `hashicorp-vault-to-alloy-wallet`: Convert pk stored in vault to EVM wallet
+- `hashicorp-vault-to-stellar-wallet`: Convert pk stored in vault to Stellar wallet
+- `hashicorp-vault-to-solana-wallet`: Convert pk stored in vault to Solana wallet
 
 ## Hashicorp Vault
 
@@ -39,7 +42,7 @@ vault server -dev -dev-root-token-id="root"
 
 ### Usage
 
-See [hashicorp-vault-to-alloy-wallet example](examples/local-hc-vault-to-alloy-wallet) for full implementation.
+See [hashicorp-vault-to-alloy-wallet example](examples/hashicorp-vault-to-alloy-wallet) for full implementation.
 
 ```rust
   let random_key: [u8; 32] = rand::thread_rng().gen();

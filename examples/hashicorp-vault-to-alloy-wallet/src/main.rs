@@ -2,7 +2,7 @@ use alloy_network::EthereumWallet;
 use alloy_primitives::{hex::FromHex, FixedBytes};
 use rand::Rng;
 use alloy_signer_local::LocalSigner;
-use oz_keystore::{HashicorpLocalClient, KeyType};
+use oz_keystore::{HashicorpVaultClient, KeyType};
 use reqwest::ClientBuilder;
 
 #[tokio::main]
@@ -13,7 +13,7 @@ async fn main() {
     .build()
     .unwrap();
 
-  let client = HashicorpLocalClient::new_with_client("http://127.0.0.1:8200", "root", client);
+  let client = HashicorpVaultClient::new_with_client("http://127.0.0.1:8200", "root", client);
 
   let random_key: [u8; 32] = rand::thread_rng().gen();
   client.store_secret("my_secret", random_key.to_vec(), KeyType::EVM).await.unwrap();

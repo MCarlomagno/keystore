@@ -1,4 +1,4 @@
-use oz_keystore::{HashicorpLocalClient, KeyType};
+use oz_keystore::{HashicorpVaultClient, KeyType};
 use rand::Rng;
 use ed25519_dalek::SigningKey;
 use reqwest::ClientBuilder;
@@ -13,7 +13,7 @@ async fn main() {
     .build()
     .unwrap();
 
-  let client = HashicorpLocalClient::new_with_client("http://127.0.0.1:8200", "root", client);
+  let client = HashicorpVaultClient::new_with_client("http://127.0.0.1:8200", "root", client);
 
   let random_key: [u8; 32] = rand::thread_rng().gen();
   client.store_secret("my_stellar_secret", random_key.to_vec(), KeyType::Stellar).await.unwrap();
