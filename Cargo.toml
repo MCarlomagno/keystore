@@ -45,3 +45,6 @@ hex = "0.4"
 
 # stellar
 stellar-strkey = "0.0.9"
+
+# solana
+bs58 = "0.5.1"

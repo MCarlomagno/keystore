@@ -70,10 +70,7 @@ impl HashicorpLocalClient {
       match key_type {
         KeyType::EVM => hex::encode(&key),
         KeyType::Stellar => PrivateKey::from_payload(&key).unwrap().to_string(),
-        KeyType::Solana => {
-            // TODO: Implement Solana-specific encoding (base58)
-            hex::encode(key)
-        },
+        KeyType::Solana => bs58::encode(key).into_string(),
       }
     }
 
@@ -81,10 +78,7 @@ impl HashicorpLocalClient {
       match key_type {
         KeyType::EVM => hex::decode(&key).unwrap(),
         KeyType::Stellar => PrivateKey::from_string(&key).unwrap().0.to_vec(),
-        KeyType::Solana => {
-            // TODO: Implement Solana-specific decoding (base58)
-            hex::decode(key).unwrap()
-        },
+        KeyType::Solana => bs58::decode(key).into_vec().unwrap(),
       }
     }
  
